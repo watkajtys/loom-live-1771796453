@@ -7,8 +7,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<SubscriptionStacker />} />
-        <Route path="/lofi" element={<LofiLoom />} />
+        <Route path="/" element={<LofiLoom />} />
+        <Route path="/subscription" element={<SubscriptionStacker />} />
         <Route path="/legacy" element={<LegacyApp />} />
       </Routes>
     </BrowserRouter>

@@ -1,70 +1,80 @@
 import { test, expect } from '@playwright/test';
 
-test('verify subscription stacker functionality', async ({ page }) => {
+test('verify LofiLoom functionality', async ({ page }) => {
   // Navigate to the app
   await page.goto('http://localhost:5173/');
 
-  // Check if the title is present
-  await expect(page.getByRole('heading', { name: /Subscription Weight Stacker/i })).toBeVisible({ timeout: 5000 });
+  // 1. Verify "LofiLoom" brand is visible
+  await expect(page.getByText('LofiLoom')).toBeVisible();
 
-  // Test Invalid Inputs: Negative Cost
-  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Negative Sub');
-  await page.getByPlaceholder('0.00').fill('-10');
-  await page.getByRole('button', { name: 'Add to Stack' }).click();
-  // Expect it NOT to be added
-  await expect(page.getByText('Negative Sub')).not.toBeVisible();
+  // 2. Verify initial timer state (25:00) and Focus Mode
+  await expect(page.getByText('25:00')).toBeVisible();
+  await expect(page.getByText('focus Mode')).toBeVisible();
 
-  // Test Invalid Inputs: Zero Cost
-  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Zero Sub');
-  await page.getByPlaceholder('0.00').fill('0');
-  await page.getByRole('button', { name: 'Add to Stack' }).click();
-  // Expect it NOT to be added
-  await expect(page.getByText('Zero Sub')).not.toBeVisible();
-
-  // Add a valid subscription
-  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Test Sub');
-  await page.getByPlaceholder('0.00').fill('100');
-  // Wait for button to be clickable
-  const addButton = page.getByRole('button', { name: 'Add to Stack' });
-  await addButton.click();
-
-  // Verify the new subscription appears in the stack
-  const testSubBlock = page.getByText('Test Sub');
-  await expect(testSubBlock).toBeVisible();
-  // Check the cost text inside the block or nearby
-  await expect(page.getByText('$100.00/mo')).toBeVisible();
-
-  // Verify the total monthly cost updated (Initial 135.96 + 100 = 235.96)
-  await expect(page.getByText('$235.96 / month')).toBeVisible();
-
-  // Wait for animation to settle
-  await page.waitForTimeout(1000);
-
-  // Drag the subscription to the inactive zone
-  const blockBox = await testSubBlock.boundingBox();
-  const dropZone = page.getByText('Drag Here to Deactivate');
-  const dropZoneBox = await dropZone.boundingBox();
-
-  if (blockBox && dropZoneBox) {
-    // Perform drag and drop
-    await page.mouse.move(blockBox.x + blockBox.width / 2, blockBox.y + blockBox.height / 2);
-    await page.mouse.down();
-    // Move to drop zone
-    await page.mouse.move(dropZoneBox.x + dropZoneBox.width / 2, dropZoneBox.y + dropZoneBox.height / 2, { steps: 20 });
-    
-    // Verify the drop zone text changes to "Release to Remove" - this confirms drag is active and detected
-    await expect(page.getByText('Release to Remove')).toBeVisible();
-
-    // Wait a bit to simulate hover over drop zone
-    await page.waitForTimeout(500);
-    await page.mouse.up();
+  // 3. Verify Audio Stems are present
+  const stems = ['Rain', 'Cafe', 'Fire', 'Vinyl', 'Nature'];
+  for (const stem of stems) {
+    await expect(page.getByText(stem, { exact: true })).toBeVisible();
   }
 
-  // Wait for removal animation
-  await page.waitForTimeout(1000);
+  // 4. Test Play/Pause functionality
+  // Initially, it should show 'play_arrow' icon
+  const playButtonIcon = page.getByText('play_arrow');
+  await expect(playButtonIcon).toBeVisible();
 
-  // Verify the subscription is removed
-  await expect(testSubBlock).not.toBeVisible();
+  // Click Play
+  await playButtonIcon.click();
+
+  // Verify it changes to 'pause'
+  await expect(page.getByText('pause')).toBeVisible();
+
+  // Wait for 2 seconds to check timer countdown
+  // Note: The timer updates every second.
+  await page.waitForTimeout(2000);
+
+  // The timer should be less than 25:00. 
+  // 25:00 is 1500 seconds. After 2s, it should be around 1498s -> 24:58.
+  // We can check that '25:00' is NO LONGER visible.
+  await expect(page.getByText('25:00')).not.toBeVisible();
+
+  // Click Pause
+  await page.getByText('pause').click();
+  await expect(page.getByText('play_arrow')).toBeVisible();
+
+  // 5. Test Session Switching
+  // Switch to Short Break
+  await page.getByRole('button', { name: 'short' }).click();
+  
+  // Timer should reset to 05:00
+  await expect(page.getByText('05:00')).toBeVisible();
+  await expect(page.getByText('short Mode')).toBeVisible();
+
+  // Switch to Long Break
+  await page.getByRole('button', { name: 'long' }).click();
+  
+  // Timer should reset to 15:00
+  await expect(page.getByText('15:00')).toBeVisible();
+  await expect(page.getByText('long Mode')).toBeVisible();
+
+  // Switch back to Focus
+  await page.getByRole('button', { name: 'focus' }).click();
+  await expect(page.getByText('25:00')).toBeVisible();
+
+  // 6. Test Reset Button (Replay icon)
+  // Start timer again
+  await page.getByText('play_arrow').click();
+  await page.waitForTimeout(2000);
+  await expect(page.getByText('25:00')).not.toBeVisible();
+
+  // Click Reset (replay icon)
+  await page.getByText('replay').click();
+  
+  // Should be back to 25:00 and paused (default reset behavior usually pauses or keeps state, check store)
+  // In FocusEngine.tsx: onClick={resetTimer}
+  // In lofiStore.ts: resetTimer: () => set((state) => ({ timer: state.initialTimer, isPlaying: false }))
+  // So it pauses and resets.
+  await expect(page.getByText('25:00')).toBeVisible();
+  await expect(page.getByText('play_arrow')).toBeVisible();
 
   // Take screenshot
   await page.screenshot({ path: 'evidence.png' });

@@ -1,119 +1,305 @@
 diff --git a/app/tests/verify.spec.ts b/app/tests/verify.spec.ts
-index 042587f..5834ea6 100644
+index 5834ea6..ccfb559 100644
 --- a/app/tests/verify.spec.ts
 +++ b/app/tests/verify.spec.ts
-@@ -7,7 +7,21 @@ test('verify subscription stacker functionality', async ({ page }) => {
-   // Check if the title is present
-   await expect(page.getByRole('heading', { name: /Subscription Weight Stacker/i })).toBeVisible({ timeout: 5000 });
+@@ -1,70 +1,80 @@
+ import { test, expect } from '@playwright/test';
  
--  // Add a new subscription
-+  // Test Invalid Inputs: Negative Cost
-+  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Negative Sub');
-+  await page.getByPlaceholder('0.00').fill('-10');
-+  await page.getByRole('button', { name: 'Add to Stack' }).click();
-+  // Expect it NOT to be added
-+  await expect(page.getByText('Negative Sub')).not.toBeVisible();
+-test('verify subscription stacker functionality', async ({ page }) => {
++test('verify LofiLoom functionality', async ({ page }) => {
+   // Navigate to the app
+   await page.goto('http://localhost:5173/');
+ 
+-  // Check if the title is present
+-  await expect(page.getByRole('heading', { name: /Subscription Weight Stacker/i })).toBeVisible({ timeout: 5000 });
++  // 1. Verify "LofiLoom" brand is visible
++  await expect(page.getByText('LofiLoom')).toBeVisible();
+ 
+-  // Test Invalid Inputs: Negative Cost
+-  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Negative Sub');
+-  await page.getByPlaceholder('0.00').fill('-10');
+-  await page.getByRole('button', { name: 'Add to Stack' }).click();
+-  // Expect it NOT to be added
+-  await expect(page.getByText('Negative Sub')).not.toBeVisible();
++  // 2. Verify initial timer state (25:00) and Focus Mode
++  await expect(page.getByText('25:00')).toBeVisible();
++  await expect(page.getByText('focus Mode')).toBeVisible();
+ 
+-  // Test Invalid Inputs: Zero Cost
+-  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Zero Sub');
+-  await page.getByPlaceholder('0.00').fill('0');
+-  await page.getByRole('button', { name: 'Add to Stack' }).click();
+-  // Expect it NOT to be added
+-  await expect(page.getByText('Zero Sub')).not.toBeVisible();
++  // 3. Verify Audio Stems are present
++  const stems = ['Rain', 'Cafe', 'Fire', 'Vinyl', 'Nature'];
++  for (const stem of stems) {
++    await expect(page.getByText(stem, { exact: true })).toBeVisible();
++  }
+ 
+-  // Add a valid subscription
+-  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Test Sub');
+-  await page.getByPlaceholder('0.00').fill('100');
+-  // Wait for button to be clickable
+-  const addButton = page.getByRole('button', { name: 'Add to Stack' });
+-  await addButton.click();
++  // 4. Test Play/Pause functionality
++  // Initially, it should show 'play_arrow' icon
++  const playButtonIcon = page.getByText('play_arrow');
++  await expect(playButtonIcon).toBeVisible();
+ 
+-  // Verify the new subscription appears in the stack
+-  const testSubBlock = page.getByText('Test Sub');
+-  await expect(testSubBlock).toBeVisible();
+-  // Check the cost text inside the block or nearby
+-  await expect(page.getByText('$100.00/mo')).toBeVisible();
++  // Click Play
++  await playButtonIcon.click();
+ 
+-  // Verify the total monthly cost updated (Initial 135.96 + 100 = 235.96)
+-  await expect(page.getByText('$235.96 / month')).toBeVisible();
++  // Verify it changes to 'pause'
++  await expect(page.getByText('pause')).toBeVisible();
+ 
+-  // Wait for animation to settle
+-  await page.waitForTimeout(1000);
++  // Wait for 2 seconds to check timer countdown
++  // Note: The timer updates every second.
++  await page.waitForTimeout(2000);
+ 
+-  // Drag the subscription to the inactive zone
+-  const blockBox = await testSubBlock.boundingBox();
+-  const dropZone = page.getByText('Drag Here to Deactivate');
+-  const dropZoneBox = await dropZone.boundingBox();
++  // The timer should be less than 25:00. 
++  // 25:00 is 1500 seconds. After 2s, it should be around 1498s -> 24:58.
++  // We can check that '25:00' is NO LONGER visible.
++  await expect(page.getByText('25:00')).not.toBeVisible();
+ 
+-  if (blockBox && dropZoneBox) {
+-    // Perform drag and drop
+-    await page.mouse.move(blockBox.x + blockBox.width / 2, blockBox.y + blockBox.height / 2);
+-    await page.mouse.down();
+-    // Move to drop zone
+-    await page.mouse.move(dropZoneBox.x + dropZoneBox.width / 2, dropZoneBox.y + dropZoneBox.height / 2, { steps: 20 });
+-    
+-    // Verify the drop zone text changes to "Release to Remove" - this confirms drag is active and detected
+-    await expect(page.getByText('Release to Remove')).toBeVisible();
++  // Click Pause
++  await page.getByText('pause').click();
++  await expect(page.getByText('play_arrow')).toBeVisible();
+ 
+-    // Wait a bit to simulate hover over drop zone
+-    await page.waitForTimeout(500);
+-    await page.mouse.up();
+-  }
++  // 5. Test Session Switching
++  // Switch to Short Break
++  await page.getByRole('button', { name: 'short' }).click();
++  
++  // Timer should reset to 05:00
++  await expect(page.getByText('05:00')).toBeVisible();
++  await expect(page.getByText('short Mode')).toBeVisible();
 +
-+  // Test Invalid Inputs: Zero Cost
-+  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Zero Sub');
-+  await page.getByPlaceholder('0.00').fill('0');
-+  await page.getByRole('button', { name: 'Add to Stack' }).click();
-+  // Expect it NOT to be added
-+  await expect(page.getByText('Zero Sub')).not.toBeVisible();
++  // Switch to Long Break
++  await page.getByRole('button', { name: 'long' }).click();
++  
++  // Timer should reset to 15:00
++  await expect(page.getByText('15:00')).toBeVisible();
++  await expect(page.getByText('long Mode')).toBeVisible();
 +
-+  // Add a valid subscription
-   await page.getByPlaceholder('Name (e.g. Netflix)').fill('Test Sub');
-   await page.getByPlaceholder('0.00').fill('100');
-   // Wait for button to be clickable
-diff --git a/src/components/subscription/InactiveZone.tsx b/src/components/subscription/InactiveZone.tsx
-index 1fb6ba0..3e85bb9 100644
---- a/src/components/subscription/InactiveZone.tsx
-+++ b/src/components/subscription/InactiveZone.tsx
-@@ -1,4 +1,4 @@
--import React, { forwardRef } from 'react';
-+import { forwardRef } from 'react';
- import clsx from 'clsx';
- import { motion } from 'framer-motion';
++  // Switch back to Focus
++  await page.getByRole('button', { name: 'focus' }).click();
++  await expect(page.getByText('25:00')).toBeVisible();
  
-diff --git a/src/components/subscription/InputArea.tsx b/src/components/subscription/InputArea.tsx
-index 98ab63a..60d23fa 100644
---- a/src/components/subscription/InputArea.tsx
-+++ b/src/components/subscription/InputArea.tsx
-@@ -11,7 +11,7 @@ const InputArea: React.FC = () => {
-     e.preventDefault();
-     if (!name || !cost) return;
-     const costNum = parseFloat(cost);
--    if (isNaN(costNum)) return;
-+    if (isNaN(costNum) || costNum <= 0) return;
+-  // Wait for removal animation
+-  await page.waitForTimeout(1000);
++  // 6. Test Reset Button (Replay icon)
++  // Start timer again
++  await page.getByText('play_arrow').click();
++  await page.waitForTimeout(2000);
++  await expect(page.getByText('25:00')).not.toBeVisible();
  
-     addSubscription({
-       name,
-diff --git a/src/components/subscription/SubscriptionBlock.tsx b/src/components/subscription/SubscriptionBlock.tsx
-index 4ae7a59..c537d91 100644
---- a/src/components/subscription/SubscriptionBlock.tsx
-+++ b/src/components/subscription/SubscriptionBlock.tsx
-@@ -1,6 +1,7 @@
- import React from 'react';
- import { motion, type PanInfo } from 'framer-motion';
- import { type Subscription } from '../../store/subscriptionStore';
-+import { calculateMonthlyCost } from '../../utils/subscriptionUtils';
- import clsx from 'clsx';
+-  // Verify the subscription is removed
+-  await expect(testSubBlock).not.toBeVisible();
++  // Click Reset (replay icon)
++  await page.getByText('replay').click();
++  
++  // Should be back to 25:00 and paused (default reset behavior usually pauses or keeps state, check store)
++  // In FocusEngine.tsx: onClick={resetTimer}
++  // In lofiStore.ts: resetTimer: () => set((state) => ({ timer: state.initialTimer, isPlaying: false }))
++  // So it pauses and resets.
++  await expect(page.getByText('25:00')).toBeVisible();
++  await expect(page.getByText('play_arrow')).toBeVisible();
  
- interface SubscriptionBlockProps {
-@@ -13,7 +14,7 @@ interface SubscriptionBlockProps {
- 
- const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag, isTop, isBottom }) => {
-   // Calculate monthly cost for flex-grow
--  const monthlyCost = subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
-+  const monthlyCost = calculateMonthlyCost(subscription);
-   
-   const style = {
-     flexGrow: monthlyCost,
-diff --git a/src/components/subscription/SubscriptionStacker.tsx b/src/components/subscription/SubscriptionStacker.tsx
-index 2e6017a..93017c1 100644
---- a/src/components/subscription/SubscriptionStacker.tsx
-+++ b/src/components/subscription/SubscriptionStacker.tsx
-@@ -1,5 +1,6 @@
- import React, { useRef, useState } from 'react';
- import { useSubscriptionStore, type Subscription } from '../../store/subscriptionStore';
-+import { calculateMonthlyCost } from '../../utils/subscriptionUtils';
- import Stack from './Stack';
- import InactiveZone from './InactiveZone';
- import InputArea from './InputArea';
-@@ -14,14 +15,13 @@ const SubscriptionStacker: React.FC = () => {
-   
-   // Calculate total monthly cost
-   const totalMonthlyCost = activeSubscriptions.reduce((acc, sub) => {
--    const monthlyCost = sub.frequency === 'yearly' ? sub.cost / 12 : sub.cost;
--    return acc + monthlyCost;
-+    return acc + calculateMonthlyCost(sub);
-   }, 0);
- 
-   const inactiveZoneRef = useRef<HTMLDivElement>(null);
-   const [isOverInactive, setIsOverInactive] = useState(false);
- 
--  const handleDrag = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-+  const handleDrag = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-     if (inactiveZoneRef.current) {
-         const zoneRect = inactiveZoneRef.current.getBoundingClientRect();
-         const point = info.point;
-@@ -38,7 +38,7 @@ const SubscriptionStacker: React.FC = () => {
-     }
-   };
- 
--  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => {
-+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => {
-     if (inactiveZoneRef.current) {
-         const zoneRect = inactiveZoneRef.current.getBoundingClientRect();
-         const point = info.point;
-diff --git a/src/utils/subscriptionUtils.ts b/src/utils/subscriptionUtils.ts
+   // Take screenshot
+   await page.screenshot({ path: 'evidence.png' });
+diff --git a/package-lock.json b/package-lock.json
+index 7757022..5402cc1 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -83,7 +83,6 @@
+       "integrity": "sha512-CGOfOJqWjg2qW/Mb6zNsDm+u5vFQ8DxXfbM09z69p5Z6+mE1ikP2jUXw+j42Pf1XTYED2Rni5f95npYeuwMDQA==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@babel/code-frame": "^7.29.0",
+         "@babel/generator": "^7.29.0",
+@@ -352,7 +351,6 @@
+       "resolved": "https://registry.npmjs.org/@dnd-kit/core/-/core-6.3.1.tgz",
+       "integrity": "sha512-xkGBRQQab4RLwgXxoqETICr6S5JlogafbhNsidmrkVv2YRs5MLwpjoF2qpiGjQt8S9AoxtIV603s0GIUpY5eYQ==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@dnd-kit/accessibility": "^3.1.1",
+         "@dnd-kit/utilities": "^3.2.2",
+@@ -1299,7 +1297,6 @@
+       "integrity": "sha512-oH72nZRfDv9lADUBSo104Aq7gPHpQZc4BTx38r9xf9pg5LfP6EzSyH2n7qFmmxRQXh7YlUXODcYsg6PuTDSxGg==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "undici-types": "~7.16.0"
+       }
+@@ -1310,7 +1307,6 @@
+       "integrity": "sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==",
+       "devOptional": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "csstype": "^3.2.2"
+       }
+@@ -1370,7 +1366,6 @@
+       "integrity": "sha512-IgSWvLobTDOjnaxAfDTIHaECbkNlAlKv2j5SjpB2v7QHKv1FIfjwMy8FsDbVfDX/KjmCmYICcw7uGaXLhtsLNg==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@typescript-eslint/scope-manager": "8.56.0",
+         "@typescript-eslint/types": "8.56.0",
+@@ -1635,7 +1630,6 @@
+       "integrity": "sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "bin": {
+         "acorn": "bin/acorn"
+       },
+@@ -1781,7 +1775,6 @@
+         }
+       ],
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "baseline-browser-mapping": "^2.9.0",
+         "caniuse-lite": "^1.0.30001759",
+@@ -2005,7 +1998,6 @@
+       "integrity": "sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@eslint-community/eslint-utils": "^4.8.0",
+         "@eslint-community/regexpp": "^4.12.1",
+@@ -3019,7 +3011,6 @@
+       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -3093,7 +3084,6 @@
+         }
+       ],
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "nanoid": "^3.3.11",
+         "picocolors": "^1.1.1",
+@@ -3135,7 +3125,6 @@
+       "resolved": "https://registry.npmjs.org/react/-/react-19.2.4.tgz",
+       "integrity": "sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==",
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=0.10.0"
+       }
+@@ -3145,7 +3134,6 @@
+       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.4.tgz",
+       "integrity": "sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "scheduler": "^0.27.0"
+       },
+@@ -3414,7 +3402,6 @@
+       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+       "dev": true,
+       "license": "Apache-2.0",
+-      "peer": true,
+       "bin": {
+         "tsc": "bin/tsc",
+         "tsserver": "bin/tsserver"
+@@ -3501,7 +3488,6 @@
+       "integrity": "sha512-RHX7IvsJlEfjyA1rS7MY0UsmF91etdLAamslHR5lfuO3W/BXRdXm2tRE64ztpSPZbKqB4wAAZ0AwtF6QzfKZLA==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@oxc-project/runtime": "0.114.0",
+         "lightningcss": "^1.31.1",
+@@ -3627,7 +3613,6 @@
+       "integrity": "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "funding": {
+         "url": "https://github.com/sponsors/colinhacks"
+       }
+diff --git a/src/App.tsx b/src/App.tsx
+index 5dad1e8..448f3b2 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -7,8 +7,8 @@ function App() {
+   return (
+     <BrowserRouter>
+       <Routes>
+-        <Route path="/" element={<SubscriptionStacker />} />
+-        <Route path="/lofi" element={<LofiLoom />} />
++        <Route path="/" element={<LofiLoom />} />
++        <Route path="/subscription" element={<SubscriptionStacker />} />
+         <Route path="/legacy" element={<LegacyApp />} />
+       </Routes>
+     </BrowserRouter>
+diff --git a/verification/verify_lofiloom.py b/verification/verify_lofiloom.py
 new file mode 100644
-index 0000000..5175381
+index 0000000..6327a69
 --- /dev/null
-+++ b/src/utils/subscriptionUtils.ts
-@@ -0,0 +1,5 @@
-+import type { Subscription } from '../store/subscriptionStore';
++++ b/verification/verify_lofiloom.py
+@@ -0,0 +1,24 @@
++from playwright.sync_api import sync_playwright
 +
-+export const calculateMonthlyCost = (subscription: Subscription): number => {
-+  return subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
-+};
++def verify_lofiloom():
++    with sync_playwright() as p:
++        browser = p.chromium.launch(headless=True)
++        page = browser.new_page()
++        try:
++            print("Navigating to http://localhost:5173/")
++            page.goto("http://localhost:5173/")
++            
++            print("Waiting for LofiLoom text...")
++            page.wait_for_selector("text=LofiLoom")
++            
++            print("Taking screenshot...")
++            page.screenshot(path="verification/lofiloom.png")
++            print("Screenshot saved to verification/lofiloom.png")
++            
++        except Exception as e:
++            print(f"Error: {e}")
++        finally:
++            browser.close()
++
++if __name__ == "__main__":
++    verify_lofiloom()
