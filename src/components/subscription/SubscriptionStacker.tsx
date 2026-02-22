@@ -81,7 +81,6 @@ const SubscriptionStacker: React.FC = () => {
                     <div className="w-full flex justify-center items-end flex-1 min-h-[500px]">
                         <Stack 
                             activeSubscriptions={activeSubscriptions} 
-                            totalCost={totalMonthlyCost} 
                             onDragEnd={handleDragEnd}
                             onDrag={handleDrag}
                         />

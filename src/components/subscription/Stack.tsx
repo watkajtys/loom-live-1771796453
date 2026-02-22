@@ -5,12 +5,11 @@ import SubscriptionBlock from './SubscriptionBlock';
 
 interface StackProps {
   activeSubscriptions: Subscription[];
-  totalCost: number;
   onDragEnd: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => void;
   onDrag?: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
 }
 
-const Stack: React.FC<StackProps> = ({ activeSubscriptions, totalCost, onDragEnd, onDrag }) => {
+const Stack: React.FC<StackProps> = ({ activeSubscriptions, onDragEnd, onDrag }) => {
   return (
     <div className="flex flex-col-reverse w-full max-w-sm h-[60vh] bg-stone-900 rounded-lg overflow-hidden border border-stone-800 shadow-2xl relative">
       <AnimatePresence initial={false}>
@@ -18,8 +17,6 @@ const Stack: React.FC<StackProps> = ({ activeSubscriptions, totalCost, onDragEnd
           <SubscriptionBlock
             key={sub.id}
             subscription={sub}
-            totalCost={totalCost}
-            maxHeight={100}
             onDragEnd={onDragEnd}
             onDrag={onDrag}
           />

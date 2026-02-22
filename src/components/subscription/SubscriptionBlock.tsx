@@ -5,25 +5,19 @@ import clsx from 'clsx';
 
 interface SubscriptionBlockProps {
   subscription: Subscription;
-  totalCost: number;
-  maxHeight: number; // The available height for the stack
   onDragEnd: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => void;
   onDrag?: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
 }
 
-const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, totalCost, maxHeight, onDragEnd, onDrag }) => {
-  // Calculate height percentage, ensuring a minimum height for visibility
+const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag }) => {
+  // Calculate monthly cost for flex-grow
   const monthlyCost = subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
-  const percentage = totalCost > 0 ? monthlyCost / totalCost : 0;
-  // Let's say max height represents 100% of cost. Or maybe we want the stack to fill the screen?
-  // "Dynamically scaling... strictly calculated based on its cost relative to the total."
-  // So the sum of heights = total height.
-  // We can use flex basis or simple percentage height.
   
-  // Using percentage for height style.
-  const heightStyle = {
-    height: `${percentage * 100}%`,
-    minHeight: '40px' // Minimum height so text is visible
+  const style = {
+    flexGrow: monthlyCost,
+    flexShrink: 1,
+    flexBasis: '0%',
+    minHeight: '40px' 
   };
 
   return (
@@ -42,7 +36,7 @@ const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, tot
         "w-full bg-amber-500 border-b border-stone-800 flex flex-col justify-center items-center p-2 cursor-grab active:cursor-grabbing",
         "hover:brightness-110 transition-colors"
       )}
-      style={heightStyle}
+      style={style}
     >
       <div className="font-bold text-stone-900 truncate w-full text-center text-sm md:text-base">
         {subscription.name}

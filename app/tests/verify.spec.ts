@@ -7,7 +7,6 @@ test('verify subscription stacker functionality', async ({ page }) => {
   // Check if the title is present
   await expect(page.getByRole('heading', { name: /Subscription Weight Stacker/i })).toBeVisible({ timeout: 5000 });
 
-  // ... rest of the test
   // Add a new subscription
   await page.getByPlaceholder('Name (e.g. Netflix)').fill('Test Sub');
   await page.getByPlaceholder('0.00').fill('100');
@@ -20,6 +19,9 @@ test('verify subscription stacker functionality', async ({ page }) => {
   await expect(testSubBlock).toBeVisible();
   // Check the cost text inside the block or nearby
   await expect(page.getByText('$100.00/mo')).toBeVisible();
+
+  // Verify the total monthly cost updated (Initial 135.96 + 100 = 235.96)
+  await expect(page.getByText('$235.96 / month')).toBeVisible();
 
   // Wait for animation to settle
   await page.waitForTimeout(1000);
