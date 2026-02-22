@@ -1,107 +1,222 @@
 diff --git a/app/tests/verify.spec.ts b/app/tests/verify.spec.ts
-index d5fe324..4b9c137 100644
+index 4b9c137..042587f 100644
 --- a/app/tests/verify.spec.ts
 +++ b/app/tests/verify.spec.ts
-@@ -7,7 +7,6 @@ test('verify subscription stacker functionality', async ({ page }) => {
-   // Check if the title is present
-   await expect(page.getByRole('heading', { name: /Subscription Weight Stacker/i })).toBeVisible({ timeout: 5000 });
- 
--  // ... rest of the test
-   // Add a new subscription
-   await page.getByPlaceholder('Name (e.g. Netflix)').fill('Test Sub');
-   await page.getByPlaceholder('0.00').fill('100');
-@@ -21,6 +20,9 @@ test('verify subscription stacker functionality', async ({ page }) => {
-   // Check the cost text inside the block or nearby
-   await expect(page.getByText('$100.00/mo')).toBeVisible();
- 
-+  // Verify the total monthly cost updated (Initial 135.96 + 100 = 235.96)
-+  await expect(page.getByText('$235.96 / month')).toBeVisible();
+@@ -37,6 +37,10 @@ test('verify subscription stacker functionality', async ({ page }) => {
+     await page.mouse.down();
+     // Move to drop zone
+     await page.mouse.move(dropZoneBox.x + dropZoneBox.width / 2, dropZoneBox.y + dropZoneBox.height / 2, { steps: 20 });
++    
++    // Verify the drop zone text changes to "Release to Remove" - this confirms drag is active and detected
++    await expect(page.getByText('Release to Remove')).toBeVisible();
 +
-   // Wait for animation to settle
-   await page.waitForTimeout(1000);
- 
+     // Wait a bit to simulate hover over drop zone
+     await page.waitForTimeout(500);
+     await page.mouse.up();
+diff --git a/package-lock.json b/package-lock.json
+index 7757022..5402cc1 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -83,7 +83,6 @@
+       "integrity": "sha512-CGOfOJqWjg2qW/Mb6zNsDm+u5vFQ8DxXfbM09z69p5Z6+mE1ikP2jUXw+j42Pf1XTYED2Rni5f95npYeuwMDQA==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@babel/code-frame": "^7.29.0",
+         "@babel/generator": "^7.29.0",
+@@ -352,7 +351,6 @@
+       "resolved": "https://registry.npmjs.org/@dnd-kit/core/-/core-6.3.1.tgz",
+       "integrity": "sha512-xkGBRQQab4RLwgXxoqETICr6S5JlogafbhNsidmrkVv2YRs5MLwpjoF2qpiGjQt8S9AoxtIV603s0GIUpY5eYQ==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@dnd-kit/accessibility": "^3.1.1",
+         "@dnd-kit/utilities": "^3.2.2",
+@@ -1299,7 +1297,6 @@
+       "integrity": "sha512-oH72nZRfDv9lADUBSo104Aq7gPHpQZc4BTx38r9xf9pg5LfP6EzSyH2n7qFmmxRQXh7YlUXODcYsg6PuTDSxGg==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "undici-types": "~7.16.0"
+       }
+@@ -1310,7 +1307,6 @@
+       "integrity": "sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==",
+       "devOptional": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "csstype": "^3.2.2"
+       }
+@@ -1370,7 +1366,6 @@
+       "integrity": "sha512-IgSWvLobTDOjnaxAfDTIHaECbkNlAlKv2j5SjpB2v7QHKv1FIfjwMy8FsDbVfDX/KjmCmYICcw7uGaXLhtsLNg==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@typescript-eslint/scope-manager": "8.56.0",
+         "@typescript-eslint/types": "8.56.0",
+@@ -1635,7 +1630,6 @@
+       "integrity": "sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "bin": {
+         "acorn": "bin/acorn"
+       },
+@@ -1781,7 +1775,6 @@
+         }
+       ],
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "baseline-browser-mapping": "^2.9.0",
+         "caniuse-lite": "^1.0.30001759",
+@@ -2005,7 +1998,6 @@
+       "integrity": "sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@eslint-community/eslint-utils": "^4.8.0",
+         "@eslint-community/regexpp": "^4.12.1",
+@@ -3019,7 +3011,6 @@
+       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -3093,7 +3084,6 @@
+         }
+       ],
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "nanoid": "^3.3.11",
+         "picocolors": "^1.1.1",
+@@ -3135,7 +3125,6 @@
+       "resolved": "https://registry.npmjs.org/react/-/react-19.2.4.tgz",
+       "integrity": "sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==",
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=0.10.0"
+       }
+@@ -3145,7 +3134,6 @@
+       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.4.tgz",
+       "integrity": "sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "scheduler": "^0.27.0"
+       },
+@@ -3414,7 +3402,6 @@
+       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+       "dev": true,
+       "license": "Apache-2.0",
+-      "peer": true,
+       "bin": {
+         "tsc": "bin/tsc",
+         "tsserver": "bin/tsserver"
+@@ -3501,7 +3488,6 @@
+       "integrity": "sha512-RHX7IvsJlEfjyA1rS7MY0UsmF91etdLAamslHR5lfuO3W/BXRdXm2tRE64ztpSPZbKqB4wAAZ0AwtF6QzfKZLA==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@oxc-project/runtime": "0.114.0",
+         "lightningcss": "^1.31.1",
+@@ -3627,7 +3613,6 @@
+       "integrity": "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "funding": {
+         "url": "https://github.com/sponsors/colinhacks"
+       }
 diff --git a/src/components/subscription/Stack.tsx b/src/components/subscription/Stack.tsx
-index 0e0821c..926b441 100644
+index 926b441..e6d87ae 100644
 --- a/src/components/subscription/Stack.tsx
 +++ b/src/components/subscription/Stack.tsx
-@@ -5,12 +5,11 @@ import SubscriptionBlock from './SubscriptionBlock';
+@@ -11,22 +11,35 @@ interface StackProps {
  
- interface StackProps {
-   activeSubscriptions: Subscription[];
--  totalCost: number;
-   onDragEnd: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => void;
-   onDrag?: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
- }
- 
--const Stack: React.FC<StackProps> = ({ activeSubscriptions, totalCost, onDragEnd, onDrag }) => {
-+const Stack: React.FC<StackProps> = ({ activeSubscriptions, onDragEnd, onDrag }) => {
+ const Stack: React.FC<StackProps> = ({ activeSubscriptions, onDragEnd, onDrag }) => {
    return (
-     <div className="flex flex-col-reverse w-full max-w-sm h-[60vh] bg-stone-900 rounded-lg overflow-hidden border border-stone-800 shadow-2xl relative">
-       <AnimatePresence initial={false}>
-@@ -18,8 +17,6 @@ const Stack: React.FC<StackProps> = ({ activeSubscriptions, totalCost, onDragEnd
-           <SubscriptionBlock
-             key={sub.id}
-             subscription={sub}
--            totalCost={totalCost}
--            maxHeight={100}
-             onDragEnd={onDragEnd}
-             onDrag={onDrag}
-           />
+-    <div className="flex flex-col-reverse w-full max-w-sm h-[60vh] bg-stone-900 rounded-lg overflow-hidden border border-stone-800 shadow-2xl relative">
+-      <AnimatePresence initial={false}>
+-        {activeSubscriptions.map((sub) => (
+-          <SubscriptionBlock
+-            key={sub.id}
+-            subscription={sub}
+-            onDragEnd={onDragEnd}
+-            onDrag={onDrag}
+-          />
+-        ))}
+-      </AnimatePresence>
+-      {activeSubscriptions.length === 0 && (
+-        <div className="absolute inset-0 flex items-center justify-center text-stone-600">
+-            No active subscriptions
++    <div className="relative w-full max-w-sm h-[60vh]">
++        {/* Background layer for visual container style */}
++        <div className="absolute inset-0 bg-stone-900 rounded-lg border border-stone-800 shadow-2xl pointer-events-none" />
++
++        {/* Content layer - No overflow hidden to allow dragging outside */}
++        <div className="relative w-full h-full flex flex-col-reverse">
++            <AnimatePresence initial={false}>
++                {activeSubscriptions.map((sub, index) => {
++                    const isBottom = index === 0;
++                    const isTop = index === activeSubscriptions.length - 1;
++                    
++                    return (
++                        <SubscriptionBlock
++                            key={sub.id}
++                            subscription={sub}
++                            onDragEnd={onDragEnd}
++                            onDrag={onDrag}
++                            isTop={isTop}
++                            isBottom={isBottom}
++                        />
++                    );
++                })}
++            </AnimatePresence>
++            {activeSubscriptions.length === 0 && (
++                <div className="absolute inset-0 flex items-center justify-center text-stone-600 pointer-events-none">
++                    No active subscriptions
++                </div>
++            )}
+         </div>
+-      )}
+     </div>
+   );
+ };
 diff --git a/src/components/subscription/SubscriptionBlock.tsx b/src/components/subscription/SubscriptionBlock.tsx
-index 687cd9b..9244bac 100644
+index 9244bac..4ae7a59 100644
 --- a/src/components/subscription/SubscriptionBlock.tsx
 +++ b/src/components/subscription/SubscriptionBlock.tsx
-@@ -5,25 +5,19 @@ import clsx from 'clsx';
- 
- interface SubscriptionBlockProps {
+@@ -7,9 +7,11 @@ interface SubscriptionBlockProps {
    subscription: Subscription;
--  totalCost: number;
--  maxHeight: number; // The available height for the stack
    onDragEnd: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => void;
    onDrag?: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
++  isTop?: boolean;
++  isBottom?: boolean;
  }
  
--const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, totalCost, maxHeight, onDragEnd, onDrag }) => {
--  // Calculate height percentage, ensuring a minimum height for visibility
-+const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag }) => {
-+  // Calculate monthly cost for flex-grow
+-const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag }) => {
++const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag, isTop, isBottom }) => {
+   // Calculate monthly cost for flex-grow
    const monthlyCost = subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
--  const percentage = totalCost > 0 ? monthlyCost / totalCost : 0;
--  // Let's say max height represents 100% of cost. Or maybe we want the stack to fill the screen?
--  // "Dynamically scaling... strictly calculated based on its cost relative to the total."
--  // So the sum of heights = total height.
--  // We can use flex basis or simple percentage height.
    
--  // Using percentage for height style.
--  const heightStyle = {
--    height: `${percentage * 100}%`,
--    minHeight: '40px' // Minimum height so text is visible
-+  const style = {
-+    flexGrow: monthlyCost,
-+    flexShrink: 1,
-+    flexBasis: '0%',
-+    minHeight: '40px' 
-   };
- 
-   return (
-@@ -42,7 +36,7 @@ const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, tot
+@@ -34,7 +36,9 @@ const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onD
+       onDrag={onDrag}
+       className={clsx(
          "w-full bg-amber-500 border-b border-stone-800 flex flex-col justify-center items-center p-2 cursor-grab active:cursor-grabbing",
-         "hover:brightness-110 transition-colors"
+-        "hover:brightness-110 transition-colors"
++        "hover:brightness-110 transition-colors",
++        isTop && "rounded-t-lg",
++        isBottom && "rounded-b-lg border-b-0" // Remove bottom border for the bottom-most item to avoid double border with container
        )}
--      style={heightStyle}
-+      style={style}
+       style={style}
      >
-       <div className="font-bold text-stone-900 truncate w-full text-center text-sm md:text-base">
-         {subscription.name}
-diff --git a/src/components/subscription/SubscriptionStacker.tsx b/src/components/subscription/SubscriptionStacker.tsx
-index 4d65143..2e6017a 100644
---- a/src/components/subscription/SubscriptionStacker.tsx
-+++ b/src/components/subscription/SubscriptionStacker.tsx
-@@ -81,7 +81,6 @@ const SubscriptionStacker: React.FC = () => {
-                     <div className="w-full flex justify-center items-end flex-1 min-h-[500px]">
-                         <Stack 
-                             activeSubscriptions={activeSubscriptions} 
--                            totalCost={totalMonthlyCost} 
-                             onDragEnd={handleDragEnd}
-                             onDrag={handleDrag}
-                         />

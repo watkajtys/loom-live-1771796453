@@ -37,6 +37,10 @@ test('verify subscription stacker functionality', async ({ page }) => {
     await page.mouse.down();
     // Move to drop zone
     await page.mouse.move(dropZoneBox.x + dropZoneBox.width / 2, dropZoneBox.y + dropZoneBox.height / 2, { steps: 20 });
+    
+    // Verify the drop zone text changes to "Release to Remove" - this confirms drag is active and detected
+    await expect(page.getByText('Release to Remove')).toBeVisible();
+
     // Wait a bit to simulate hover over drop zone
     await page.waitForTimeout(500);
     await page.mouse.up();

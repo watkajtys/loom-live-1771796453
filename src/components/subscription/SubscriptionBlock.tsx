@@ -7,9 +7,11 @@ interface SubscriptionBlockProps {
   subscription: Subscription;
   onDragEnd: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => void;
   onDrag?: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
+  isTop?: boolean;
+  isBottom?: boolean;
 }
 
-const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag }) => {
+const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag, isTop, isBottom }) => {
   // Calculate monthly cost for flex-grow
   const monthlyCost = subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
   
@@ -34,7 +36,9 @@ const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onD
       onDrag={onDrag}
       className={clsx(
         "w-full bg-amber-500 border-b border-stone-800 flex flex-col justify-center items-center p-2 cursor-grab active:cursor-grabbing",
-        "hover:brightness-110 transition-colors"
+        "hover:brightness-110 transition-colors",
+        isTop && "rounded-t-lg",
+        isBottom && "rounded-b-lg border-b-0" // Remove bottom border for the bottom-most item to avoid double border with container
       )}
       style={style}
     >

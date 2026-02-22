@@ -11,22 +11,35 @@ interface StackProps {
 
 const Stack: React.FC<StackProps> = ({ activeSubscriptions, onDragEnd, onDrag }) => {
   return (
-    <div className="flex flex-col-reverse w-full max-w-sm h-[60vh] bg-stone-900 rounded-lg overflow-hidden border border-stone-800 shadow-2xl relative">
-      <AnimatePresence initial={false}>
-        {activeSubscriptions.map((sub) => (
-          <SubscriptionBlock
-            key={sub.id}
-            subscription={sub}
-            onDragEnd={onDragEnd}
-            onDrag={onDrag}
-          />
-        ))}
-      </AnimatePresence>
-      {activeSubscriptions.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center text-stone-600">
-            No active subscriptions
+    <div className="relative w-full max-w-sm h-[60vh]">
+        {/* Background layer for visual container style */}
+        <div className="absolute inset-0 bg-stone-900 rounded-lg border border-stone-800 shadow-2xl pointer-events-none" />
+
+        {/* Content layer - No overflow hidden to allow dragging outside */}
+        <div className="relative w-full h-full flex flex-col-reverse">
+            <AnimatePresence initial={false}>
+                {activeSubscriptions.map((sub, index) => {
+                    const isBottom = index === 0;
+                    const isTop = index === activeSubscriptions.length - 1;
+                    
+                    return (
+                        <SubscriptionBlock
+                            key={sub.id}
+                            subscription={sub}
+                            onDragEnd={onDragEnd}
+                            onDrag={onDrag}
+                            isTop={isTop}
+                            isBottom={isBottom}
+                        />
+                    );
+                })}
+            </AnimatePresence>
+            {activeSubscriptions.length === 0 && (
+                <div className="absolute inset-0 flex items-center justify-center text-stone-600 pointer-events-none">
+                    No active subscriptions
+                </div>
+            )}
         </div>
-      )}
     </div>
   );
 };
