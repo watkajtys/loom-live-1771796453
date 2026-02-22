@@ -7,7 +7,21 @@ test('verify subscription stacker functionality', async ({ page }) => {
   // Check if the title is present
   await expect(page.getByRole('heading', { name: /Subscription Weight Stacker/i })).toBeVisible({ timeout: 5000 });
 
-  // Add a new subscription
+  // Test Invalid Inputs: Negative Cost
+  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Negative Sub');
+  await page.getByPlaceholder('0.00').fill('-10');
+  await page.getByRole('button', { name: 'Add to Stack' }).click();
+  // Expect it NOT to be added
+  await expect(page.getByText('Negative Sub')).not.toBeVisible();
+
+  // Test Invalid Inputs: Zero Cost
+  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Zero Sub');
+  await page.getByPlaceholder('0.00').fill('0');
+  await page.getByRole('button', { name: 'Add to Stack' }).click();
+  // Expect it NOT to be added
+  await expect(page.getByText('Zero Sub')).not.toBeVisible();
+
+  // Add a valid subscription
   await page.getByPlaceholder('Name (e.g. Netflix)').fill('Test Sub');
   await page.getByPlaceholder('0.00').fill('100');
   // Wait for button to be clickable

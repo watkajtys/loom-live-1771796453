@@ -11,7 +11,7 @@ const InputArea: React.FC = () => {
     e.preventDefault();
     if (!name || !cost) return;
     const costNum = parseFloat(cost);
-    if (isNaN(costNum)) return;
+    if (isNaN(costNum) || costNum <= 0) return;
 
     addSubscription({
       name,

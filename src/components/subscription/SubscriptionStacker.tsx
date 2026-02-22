@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useSubscriptionStore, type Subscription } from '../../store/subscriptionStore';
+import { calculateMonthlyCost } from '../../utils/subscriptionUtils';
 import Stack from './Stack';
 import InactiveZone from './InactiveZone';
 import InputArea from './InputArea';
@@ -14,14 +15,13 @@ const SubscriptionStacker: React.FC = () => {
   
   // Calculate total monthly cost
   const totalMonthlyCost = activeSubscriptions.reduce((acc, sub) => {
-    const monthlyCost = sub.frequency === 'yearly' ? sub.cost / 12 : sub.cost;
-    return acc + monthlyCost;
+    return acc + calculateMonthlyCost(sub);
   }, 0);
 
   const inactiveZoneRef = useRef<HTMLDivElement>(null);
   const [isOverInactive, setIsOverInactive] = useState(false);
 
-  const handleDrag = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDrag = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (inactiveZoneRef.current) {
         const zoneRect = inactiveZoneRef.current.getBoundingClientRect();
         const point = info.point;
@@ -38,7 +38,7 @@ const SubscriptionStacker: React.FC = () => {
     }
   };
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => {
     if (inactiveZoneRef.current) {
         const zoneRect = inactiveZoneRef.current.getBoundingClientRect();
         const point = info.point;

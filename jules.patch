@@ -1,222 +1,119 @@
 diff --git a/app/tests/verify.spec.ts b/app/tests/verify.spec.ts
-index 4b9c137..042587f 100644
+index 042587f..5834ea6 100644
 --- a/app/tests/verify.spec.ts
 +++ b/app/tests/verify.spec.ts
-@@ -37,6 +37,10 @@ test('verify subscription stacker functionality', async ({ page }) => {
-     await page.mouse.down();
-     // Move to drop zone
-     await page.mouse.move(dropZoneBox.x + dropZoneBox.width / 2, dropZoneBox.y + dropZoneBox.height / 2, { steps: 20 });
-+    
-+    // Verify the drop zone text changes to "Release to Remove" - this confirms drag is active and detected
-+    await expect(page.getByText('Release to Remove')).toBeVisible();
-+
-     // Wait a bit to simulate hover over drop zone
-     await page.waitForTimeout(500);
-     await page.mouse.up();
-diff --git a/package-lock.json b/package-lock.json
-index 7757022..5402cc1 100644
---- a/package-lock.json
-+++ b/package-lock.json
-@@ -83,7 +83,6 @@
-       "integrity": "sha512-CGOfOJqWjg2qW/Mb6zNsDm+u5vFQ8DxXfbM09z69p5Z6+mE1ikP2jUXw+j42Pf1XTYED2Rni5f95npYeuwMDQA==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@babel/code-frame": "^7.29.0",
-         "@babel/generator": "^7.29.0",
-@@ -352,7 +351,6 @@
-       "resolved": "https://registry.npmjs.org/@dnd-kit/core/-/core-6.3.1.tgz",
-       "integrity": "sha512-xkGBRQQab4RLwgXxoqETICr6S5JlogafbhNsidmrkVv2YRs5MLwpjoF2qpiGjQt8S9AoxtIV603s0GIUpY5eYQ==",
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@dnd-kit/accessibility": "^3.1.1",
-         "@dnd-kit/utilities": "^3.2.2",
-@@ -1299,7 +1297,6 @@
-       "integrity": "sha512-oH72nZRfDv9lADUBSo104Aq7gPHpQZc4BTx38r9xf9pg5LfP6EzSyH2n7qFmmxRQXh7YlUXODcYsg6PuTDSxGg==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "undici-types": "~7.16.0"
-       }
-@@ -1310,7 +1307,6 @@
-       "integrity": "sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==",
-       "devOptional": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "csstype": "^3.2.2"
-       }
-@@ -1370,7 +1366,6 @@
-       "integrity": "sha512-IgSWvLobTDOjnaxAfDTIHaECbkNlAlKv2j5SjpB2v7QHKv1FIfjwMy8FsDbVfDX/KjmCmYICcw7uGaXLhtsLNg==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@typescript-eslint/scope-manager": "8.56.0",
-         "@typescript-eslint/types": "8.56.0",
-@@ -1635,7 +1630,6 @@
-       "integrity": "sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "bin": {
-         "acorn": "bin/acorn"
-       },
-@@ -1781,7 +1775,6 @@
-         }
-       ],
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "baseline-browser-mapping": "^2.9.0",
-         "caniuse-lite": "^1.0.30001759",
-@@ -2005,7 +1998,6 @@
-       "integrity": "sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@eslint-community/eslint-utils": "^4.8.0",
-         "@eslint-community/regexpp": "^4.12.1",
-@@ -3019,7 +3011,6 @@
-       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "engines": {
-         "node": ">=12"
-       },
-@@ -3093,7 +3084,6 @@
-         }
-       ],
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "nanoid": "^3.3.11",
-         "picocolors": "^1.1.1",
-@@ -3135,7 +3125,6 @@
-       "resolved": "https://registry.npmjs.org/react/-/react-19.2.4.tgz",
-       "integrity": "sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==",
-       "license": "MIT",
--      "peer": true,
-       "engines": {
-         "node": ">=0.10.0"
-       }
-@@ -3145,7 +3134,6 @@
-       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.4.tgz",
-       "integrity": "sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==",
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "scheduler": "^0.27.0"
-       },
-@@ -3414,7 +3402,6 @@
-       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
-       "dev": true,
-       "license": "Apache-2.0",
--      "peer": true,
-       "bin": {
-         "tsc": "bin/tsc",
-         "tsserver": "bin/tsserver"
-@@ -3501,7 +3488,6 @@
-       "integrity": "sha512-RHX7IvsJlEfjyA1rS7MY0UsmF91etdLAamslHR5lfuO3W/BXRdXm2tRE64ztpSPZbKqB4wAAZ0AwtF6QzfKZLA==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "dependencies": {
-         "@oxc-project/runtime": "0.114.0",
-         "lightningcss": "^1.31.1",
-@@ -3627,7 +3613,6 @@
-       "integrity": "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==",
-       "dev": true,
-       "license": "MIT",
--      "peer": true,
-       "funding": {
-         "url": "https://github.com/sponsors/colinhacks"
-       }
-diff --git a/src/components/subscription/Stack.tsx b/src/components/subscription/Stack.tsx
-index 926b441..e6d87ae 100644
---- a/src/components/subscription/Stack.tsx
-+++ b/src/components/subscription/Stack.tsx
-@@ -11,22 +11,35 @@ interface StackProps {
+@@ -7,7 +7,21 @@ test('verify subscription stacker functionality', async ({ page }) => {
+   // Check if the title is present
+   await expect(page.getByRole('heading', { name: /Subscription Weight Stacker/i })).toBeVisible({ timeout: 5000 });
  
- const Stack: React.FC<StackProps> = ({ activeSubscriptions, onDragEnd, onDrag }) => {
-   return (
--    <div className="flex flex-col-reverse w-full max-w-sm h-[60vh] bg-stone-900 rounded-lg overflow-hidden border border-stone-800 shadow-2xl relative">
--      <AnimatePresence initial={false}>
--        {activeSubscriptions.map((sub) => (
--          <SubscriptionBlock
--            key={sub.id}
--            subscription={sub}
--            onDragEnd={onDragEnd}
--            onDrag={onDrag}
--          />
--        ))}
--      </AnimatePresence>
--      {activeSubscriptions.length === 0 && (
--        <div className="absolute inset-0 flex items-center justify-center text-stone-600">
--            No active subscriptions
-+    <div className="relative w-full max-w-sm h-[60vh]">
-+        {/* Background layer for visual container style */}
-+        <div className="absolute inset-0 bg-stone-900 rounded-lg border border-stone-800 shadow-2xl pointer-events-none" />
+-  // Add a new subscription
++  // Test Invalid Inputs: Negative Cost
++  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Negative Sub');
++  await page.getByPlaceholder('0.00').fill('-10');
++  await page.getByRole('button', { name: 'Add to Stack' }).click();
++  // Expect it NOT to be added
++  await expect(page.getByText('Negative Sub')).not.toBeVisible();
 +
-+        {/* Content layer - No overflow hidden to allow dragging outside */}
-+        <div className="relative w-full h-full flex flex-col-reverse">
-+            <AnimatePresence initial={false}>
-+                {activeSubscriptions.map((sub, index) => {
-+                    const isBottom = index === 0;
-+                    const isTop = index === activeSubscriptions.length - 1;
-+                    
-+                    return (
-+                        <SubscriptionBlock
-+                            key={sub.id}
-+                            subscription={sub}
-+                            onDragEnd={onDragEnd}
-+                            onDrag={onDrag}
-+                            isTop={isTop}
-+                            isBottom={isBottom}
-+                        />
-+                    );
-+                })}
-+            </AnimatePresence>
-+            {activeSubscriptions.length === 0 && (
-+                <div className="absolute inset-0 flex items-center justify-center text-stone-600 pointer-events-none">
-+                    No active subscriptions
-+                </div>
-+            )}
-         </div>
--      )}
-     </div>
-   );
- };
++  // Test Invalid Inputs: Zero Cost
++  await page.getByPlaceholder('Name (e.g. Netflix)').fill('Zero Sub');
++  await page.getByPlaceholder('0.00').fill('0');
++  await page.getByRole('button', { name: 'Add to Stack' }).click();
++  // Expect it NOT to be added
++  await expect(page.getByText('Zero Sub')).not.toBeVisible();
++
++  // Add a valid subscription
+   await page.getByPlaceholder('Name (e.g. Netflix)').fill('Test Sub');
+   await page.getByPlaceholder('0.00').fill('100');
+   // Wait for button to be clickable
+diff --git a/src/components/subscription/InactiveZone.tsx b/src/components/subscription/InactiveZone.tsx
+index 1fb6ba0..3e85bb9 100644
+--- a/src/components/subscription/InactiveZone.tsx
++++ b/src/components/subscription/InactiveZone.tsx
+@@ -1,4 +1,4 @@
+-import React, { forwardRef } from 'react';
++import { forwardRef } from 'react';
+ import clsx from 'clsx';
+ import { motion } from 'framer-motion';
+ 
+diff --git a/src/components/subscription/InputArea.tsx b/src/components/subscription/InputArea.tsx
+index 98ab63a..60d23fa 100644
+--- a/src/components/subscription/InputArea.tsx
++++ b/src/components/subscription/InputArea.tsx
+@@ -11,7 +11,7 @@ const InputArea: React.FC = () => {
+     e.preventDefault();
+     if (!name || !cost) return;
+     const costNum = parseFloat(cost);
+-    if (isNaN(costNum)) return;
++    if (isNaN(costNum) || costNum <= 0) return;
+ 
+     addSubscription({
+       name,
 diff --git a/src/components/subscription/SubscriptionBlock.tsx b/src/components/subscription/SubscriptionBlock.tsx
-index 9244bac..4ae7a59 100644
+index 4ae7a59..c537d91 100644
 --- a/src/components/subscription/SubscriptionBlock.tsx
 +++ b/src/components/subscription/SubscriptionBlock.tsx
-@@ -7,9 +7,11 @@ interface SubscriptionBlockProps {
-   subscription: Subscription;
-   onDragEnd: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => void;
-   onDrag?: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
-+  isTop?: boolean;
-+  isBottom?: boolean;
- }
+@@ -1,6 +1,7 @@
+ import React from 'react';
+ import { motion, type PanInfo } from 'framer-motion';
+ import { type Subscription } from '../../store/subscriptionStore';
++import { calculateMonthlyCost } from '../../utils/subscriptionUtils';
+ import clsx from 'clsx';
  
--const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag }) => {
-+const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag, isTop, isBottom }) => {
+ interface SubscriptionBlockProps {
+@@ -13,7 +14,7 @@ interface SubscriptionBlockProps {
+ 
+ const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag, isTop, isBottom }) => {
    // Calculate monthly cost for flex-grow
-   const monthlyCost = subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
+-  const monthlyCost = subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
++  const monthlyCost = calculateMonthlyCost(subscription);
    
-@@ -34,7 +36,9 @@ const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onD
-       onDrag={onDrag}
-       className={clsx(
-         "w-full bg-amber-500 border-b border-stone-800 flex flex-col justify-center items-center p-2 cursor-grab active:cursor-grabbing",
--        "hover:brightness-110 transition-colors"
-+        "hover:brightness-110 transition-colors",
-+        isTop && "rounded-t-lg",
-+        isBottom && "rounded-b-lg border-b-0" // Remove bottom border for the bottom-most item to avoid double border with container
-       )}
-       style={style}
-     >
+   const style = {
+     flexGrow: monthlyCost,
+diff --git a/src/components/subscription/SubscriptionStacker.tsx b/src/components/subscription/SubscriptionStacker.tsx
+index 2e6017a..93017c1 100644
+--- a/src/components/subscription/SubscriptionStacker.tsx
++++ b/src/components/subscription/SubscriptionStacker.tsx
+@@ -1,5 +1,6 @@
+ import React, { useRef, useState } from 'react';
+ import { useSubscriptionStore, type Subscription } from '../../store/subscriptionStore';
++import { calculateMonthlyCost } from '../../utils/subscriptionUtils';
+ import Stack from './Stack';
+ import InactiveZone from './InactiveZone';
+ import InputArea from './InputArea';
+@@ -14,14 +15,13 @@ const SubscriptionStacker: React.FC = () => {
+   
+   // Calculate total monthly cost
+   const totalMonthlyCost = activeSubscriptions.reduce((acc, sub) => {
+-    const monthlyCost = sub.frequency === 'yearly' ? sub.cost / 12 : sub.cost;
+-    return acc + monthlyCost;
++    return acc + calculateMonthlyCost(sub);
+   }, 0);
+ 
+   const inactiveZoneRef = useRef<HTMLDivElement>(null);
+   const [isOverInactive, setIsOverInactive] = useState(false);
+ 
+-  const handleDrag = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
++  const handleDrag = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+     if (inactiveZoneRef.current) {
+         const zoneRect = inactiveZoneRef.current.getBoundingClientRect();
+         const point = info.point;
+@@ -38,7 +38,7 @@ const SubscriptionStacker: React.FC = () => {
+     }
+   };
+ 
+-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => {
++  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo, subscription: Subscription) => {
+     if (inactiveZoneRef.current) {
+         const zoneRect = inactiveZoneRef.current.getBoundingClientRect();
+         const point = info.point;
+diff --git a/src/utils/subscriptionUtils.ts b/src/utils/subscriptionUtils.ts
+new file mode 100644
+index 0000000..5175381
+--- /dev/null
++++ b/src/utils/subscriptionUtils.ts
+@@ -0,0 +1,5 @@
++import type { Subscription } from '../store/subscriptionStore';
++
++export const calculateMonthlyCost = (subscription: Subscription): number => {
++  return subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
++};

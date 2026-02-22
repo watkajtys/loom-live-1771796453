@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, type PanInfo } from 'framer-motion';
 import { type Subscription } from '../../store/subscriptionStore';
+import { calculateMonthlyCost } from '../../utils/subscriptionUtils';
 import clsx from 'clsx';
 
 interface SubscriptionBlockProps {
@@ -13,7 +14,7 @@ interface SubscriptionBlockProps {
 
 const SubscriptionBlock: React.FC<SubscriptionBlockProps> = ({ subscription, onDragEnd, onDrag, isTop, isBottom }) => {
   // Calculate monthly cost for flex-grow
-  const monthlyCost = subscription.frequency === 'yearly' ? subscription.cost / 12 : subscription.cost;
+  const monthlyCost = calculateMonthlyCost(subscription);
   
   const style = {
     flexGrow: monthlyCost,
